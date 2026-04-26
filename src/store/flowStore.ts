@@ -10,7 +10,7 @@ export const POLAR_SYS_HASH: Record<FlowStepId, string> = {
   incident: '#/incident',
 }
 
-const IDS = ['anomaly', 'monitor', 'incident'] as const satisfies readonly FlowStepId[]
+const IDS = ['anomaly', 'incident', 'monitor'] as const satisfies readonly FlowStepId[]
 
 export const FLOW_STEPS: {
   id: FlowStepId

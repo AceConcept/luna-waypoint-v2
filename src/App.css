@@ -220,3 +220,23 @@
   width: 100%;
   box-sizing: border-box;
 }
+
+/*
+  Host index.css sets global h1/h2 to --text-h (dark) for the light page chrome.
+  polar-sys (stepscreen) reuses the same h1 elements with .page-title but no
+  explicit color; those rules must not apply on the dark artboard.
+*/
+.luna-chrome .artboard h1,
+.luna-chrome .artboard h2 {
+  color: #ffffff;
+}
+
+/* Luna sidebar: package uses all-caps for step list + Start; use normal casing */
+.luna-chrome .preview-card__step-label {
+  text-transform: none;
+}
+
+.luna-chrome .start-btn {
+  text-transform: none;
+  letter-spacing: 0.1em;
+}

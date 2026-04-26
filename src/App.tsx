@@ -30,7 +30,7 @@ function App() {
             const hit = FLOW_SIDEBAR_ITEMS.find((item) => item.id === id)
             if (hit) goToStepById(hit.id)
           }}
-          railLabel="WAYPOINT GUIDE"
+          railLabel="Waypoint guide"
         />
       )}
     >

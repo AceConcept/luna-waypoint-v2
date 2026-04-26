@@ -15,9 +15,11 @@ export type FlowSidebarItem = {
   heroImageUrl?: string
 }
 
-/** Thumbnails: `public/step_imgs/Step 1.png` … `Step 3.png` */
+/** Thumbnails in `public/step_imgs/` (note: step 1 is `Step-1.png`). */
 function stepImageUrl(n: 1 | 2 | 3): string {
-  return `/step_imgs/${encodeURIComponent(`Step ${n}.png`)}`
+  const file =
+    n === 1 ? 'Step-1.png' : n === 2 ? 'Step 2.png' : 'Step 3.png'
+  return `/step_imgs/${encodeURIComponent(file)}`
 }
 
 export const FLOW_SIDEBAR_ITEMS: FlowSidebarItem[] = [
@@ -32,22 +34,22 @@ export const FLOW_SIDEBAR_ITEMS: FlowSidebarItem[] = [
     heroImageUrl: stepImageUrl(1),
   },
   {
-    id: 'monitor',
-    label: 'Monitor',
-    step: 'Monitor',
-    title: 'Monitor',
-    description: STEP_DESCRIPTIONS[1],
-    swatch: '#dcd4ec',
-    thumbUrl: stepImageUrl(2),
-    heroImageUrl: stepImageUrl(2),
-  },
-  {
     id: 'incident',
     label: 'Incident',
     step: 'Incident',
     title: 'Incident',
-    description: STEP_DESCRIPTIONS[2],
+    description: STEP_DESCRIPTIONS[1],
     swatch: '#cab6e0',
+    thumbUrl: stepImageUrl(2),
+    heroImageUrl: stepImageUrl(2),
+  },
+  {
+    id: 'monitor',
+    label: 'Monitor',
+    step: 'Monitor',
+    title: 'Monitor',
+    description: STEP_DESCRIPTIONS[2],
+    swatch: '#dcd4ec',
     thumbUrl: stepImageUrl(3),
     heroImageUrl: stepImageUrl(3),
   },
