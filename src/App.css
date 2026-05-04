@@ -222,13 +222,27 @@
 }
 
 /*
-  Host index.css sets global h1/h2 to --text-h (dark) for the light page chrome.
-  polar-sys (stepscreen) reuses the same h1 elements with .page-title but no
-  explicit color; those rules must not apply on the dark artboard.
+  Host index.css sets global h1–h2 to `font-family: var(--heading)` (system UI).
+  polar-sys uses real h1/h2 for .page-title etc.; override font + color inside the
+  scaled artboard so incident/monitor match polar’s Inter stack, not index.css.
 */
 .luna-chrome .artboard h1,
-.luna-chrome .artboard h2 {
+.luna-chrome .artboard h2,
+.luna-chrome .artboard h3,
+.luna-chrome .artboard h4 {
   color: #ffffff;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+/* index.css does not set .btn; ensure chip/button controls use Inter like polar-sys .app */
+.luna-chrome .artboard .btn,
+.luna-chrome .artboard .btn-dark,
+.luna-chrome .artboard .btn-ghost,
+.luna-chrome .artboard .btn-primary,
+.luna-chrome .artboard .incident-status-btn,
+.luna-chrome .artboard .title-chip,
+.luna-chrome .artboard .badge {
+  font-family: Inter, system-ui, sans-serif;
 }
 
 /*
