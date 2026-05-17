@@ -23,7 +23,7 @@ function App() {
     <LunaChrome
       footerBackgroundUrl="/news_bg.jpg"
       sidebar={({ expanded, onExpandedChange }) => (
-        <>
+        <div className="waypoint-sidebar">
           <LunaSidebar
             items={FLOW_SIDEBAR_ITEMS}
             expanded={expanded}
@@ -45,12 +45,10 @@ function App() {
             <span className="luna-rail-overlay__text">{RAIL_LABEL}</span>
             <span className="luna-rail-overlay__dot" />
           </div>
-        </>
+        </div>
       )}
     >
-      <div className="luna-stage luna-stage--fill">
-        <WaypointStepsScreen polarHash={POLAR_SYS_HASH[step.id]} />
-      </div>
+      <WaypointStepsScreen polarHash={POLAR_SYS_HASH[step.id]} />
     </LunaChrome>
   )
 }

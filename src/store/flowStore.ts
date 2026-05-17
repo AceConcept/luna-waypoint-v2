@@ -7,13 +7,13 @@ export type FlowStepId = 'anomaly' | 'monitor' | 'incident'
 /** Map polar-sys `#/…` segments to sidebar / store ids (handles in-app navigations between views). */
 export function polarFlowIdFromHash(hash: string): FlowStepId {
   const m = String(hash || '').match(/#\/([\w-]+)/)
-  const segment = m ? m[1] : 'anomaly'
+  const segment = m ? m[1] : ''
   if (segment === 'monitor' || segment === 'incident') return segment
   return 'anomaly'
 }
 
 export const POLAR_SYS_HASH: Record<FlowStepId, string> = {
-  anomaly: '#/anomaly',
+  anomaly: '',
   monitor: '#/monitor',
   incident: '#/incident',
 }
@@ -32,7 +32,7 @@ export const FLOW_STEPS: {
 
 function initialStepIndexFromLocation(): number {
   if (typeof window === 'undefined') return 0
-  const id = polarFlowIdFromHash(window.location.hash || '#/')
+  const id = polarFlowIdFromHash(window.location.hash)
   const index = FLOW_STEPS.findIndex((s) => s.id === id)
   return index >= 0 ? index : 0
 }

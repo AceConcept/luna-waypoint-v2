@@ -12,7 +12,8 @@ export const CANVAS_W = DESIGN_REM_W * DESIGN_ROOT_PX;
 export const CANVAS_H = DESIGN_REM_H * DESIGN_ROOT_PX;
 
 /** Must match `--sidebar-collapsed` / `--sidebar-expanded` in LunaSidebar.css (`:root`). */
-export const SIDEBAR_COLLAPSED_REM = 4.875;
+/** 98px @ 16px/rem — must match `--sidebar-collapsed` in LunaSidebar.css */
+export const SIDEBAR_COLLAPSED_REM = 6.125;
 export const SIDEBAR_EXPANDED_REM = 49.3125;
 
 /** Must match `--page-row-otf-footer-h` in LunaSidebar.css (`:root`). */
@@ -41,11 +42,21 @@ export function getViewportSize() {
   return { width: window.innerWidth, height: window.innerHeight };
 }
 
-/** “Contain” scale: fit full CANVAS_W×CANVAS_H design in the viewport. */
+/** “Contain” scale: fit full CANVAS_W×CANVAS_H design inside the viewport (may letterbox). */
 export function getCanvasContainScale(width, height) {
   const sx = width / CANVAS_W;
   const sy = height / CANVAS_H;
   return Math.min(sx, sy);
+}
+
+/**
+ * “Cover” / fill-viewport scale: at least one axis fills the viewport; the other may scroll.
+ * When the window is short, width uses sx so the band spans edge-to-edge instead of shrinking with min().
+ */
+export function getCanvasFillViewportScale(width, height) {
+  const sx = width / CANVAS_W;
+  const sy = height / CANVAS_H;
+  return Math.max(sx, sy);
 }
 
 /**

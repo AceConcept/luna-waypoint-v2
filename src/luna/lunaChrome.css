@@ -1,5 +1,5 @@
 /*
-  App-owned shell: gutters, artboard scale, scrim, footer, docked sidebar overrides.
+  App-owned shell: gutters, artboard scale, scrim, docked sidebar overrides.
   Load after LunaSidebar.css so :root tokens (--canvas-w, --canvas-h, etc.) exist.
 */
 
@@ -16,41 +16,39 @@
   background: #d8d8d8;
   --luna-space-left-bg: #d8d8d8;
   --luna-space-right-bg: #d8d8d8;
+  --luna-horizontal-pad-top: 8.1875rem; /* 131px */
+  --luna-horizontal-pad-bottom: 14.3125rem; /* 229px */
+  --luna-center-slot: 0.75;
 }
 
-.luna-scale-stage {
-  width: 100%;
-}
-
-.luna-chrome {
-  width: 100%;
-}
-
-.luna-shell {
-  width: 100%;
-}
-
+/* Canvas row: full viewport width; height 90rem (scales via html font-size). */
 .luna-canvas-row {
   position: relative;
+  width: 100%;
+  height: var(--canvas-h);
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+
+/* Main band fills the 90rem row; padding inside the design box. */
+.luna-canvas-row > .waypoint-horizontal {
+  position: relative;
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
+  justify-content: flex-end;
   align-items: stretch;
   width: 100%;
-  /* Cross-size comes from .luna-center-column height (scaled px), not the design-surface layout box */
-  min-height: var(--luna-canvas-row-min-h, 1px);
-  overflow: hidden;
+  height: 100%;
+  padding-top: var(--luna-horizontal-pad-top);
+  padding-bottom: var(--luna-horizontal-pad-bottom);
   background: url('/bg-img/bg-img3.jpg') repeat 0 0;
 }
 
-/* Allow fixed scrim to cover viewport (not clipped by row overflow) */
 .luna-canvas-row.luna-canvas-row--drawer-open {
   overflow: visible;
 }
 
-/*
-  Viewport-wide dimmer: fixed so it covers gutters + center + footer band while
-  drawer is open; z-index above design surface (40), below docked sidebar (45).
-*/
 .luna-canvas-row-scrim {
   position: fixed;
   inset: 0;
@@ -70,81 +68,53 @@
 .luna-space-right {
   flex: 1 1 0;
   min-width: 0;
+  height: 100%;
   align-self: stretch;
   background: url('/bg-img/bg-img3.jpg') repeat 0 0;
-}
-
-.luna-space-left {
   background-color: transparent;
 }
 
-.luna-space-right {
-  background-color: transparent;
-}
-
-/*
-  Center column: width = scaled canvas footprint in px.
-  Height = scaled design height in px — not the pre-transform layout box (90rem), which would
-  stretch the row far past the viewport; overflow clips the scaled design surface.
-*/
-.luna-chrome .luna-center-column {
+/* Center column: 75% of canvas in rem (scales with root font-size). */
+.luna-canvas-row .luna-center-column {
   position: relative;
   flex: 0 0 auto;
-  width: var(--luna-center-column-width);
-  height: var(--luna-center-column-height, var(--luna-canvas-row-min-h));
+  width: calc(var(--canvas-w) * var(--luna-center-slot));
+  height: calc(var(--canvas-h) * var(--luna-center-slot));
   align-self: center;
   min-width: 0;
   overflow: hidden;
 }
 
-.luna-chrome .luna-center-column > .luna-design-surface {
+.luna-canvas-row .luna-center-column > .luna-design-surface {
   position: relative;
   z-index: 40;
 }
 
-.luna-chrome
+.luna-canvas-row
   .luna-center-column
   > .luna-design-surface.luna-design-surface--drawer-open {
   pointer-events: none;
 }
 
-/* Design rem 160×90 + scale — the “2560×1440” logical canvas */
-.luna-chrome .luna-design-surface {
-  width: var(--canvas-w);
-  height: var(--canvas-h);
-  transform: scale(var(--luna-design-surface-scale, var(--luna-scale)));
-  transform-origin: 0 0;
+.luna-canvas-row .luna-design-surface {
+  width: 100%;
+  height: 100%;
   position: relative;
 }
 
-/* Stage / flow plate inside design surface (scales with parent transform) */
-.luna-chrome .luna-stage {
+.luna-canvas-row .luna-design-surface > .viewport {
   position: absolute;
   inset: 0;
   z-index: 10;
-  padding: 2rem calc(var(--sidebar-collapsed) + 2rem) 2rem 2rem;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: auto;
-}
-
-/* Full-bleed content (e.g. steps-project-slot): no inset plate — fills entire design surface */
-.luna-chrome .luna-stage.luna-stage--fill {
-  padding: 0;
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.luna-chrome .luna-stage.luna-stage--fill > * {
-  flex: 1 1 auto;
-  min-height: 0;
-  min-width: 0;
-  width: 100%;
-}
-
-.luna-chrome .luna-stage-artboard {
+.luna-canvas-row .luna-stage-artboard {
   width: min(104rem, 100%);
   aspect-ratio: 2.19 / 1;
   border: 0.0625rem solid rgba(0, 0, 0, 0.08);
@@ -157,42 +127,54 @@
   overflow: auto;
 }
 
+/* Sidebar: design rem inside scaled row (no separate transform). */
+.luna-canvas-row > .waypoint-sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--luna-shell-design-w, var(--sidebar-collapsed));
+  height: 100%;
+  z-index: 45;
+  pointer-events: none;
+  box-sizing: border-box;
+  transition: width var(--sidebar-expand-duration, 0.35s) var(--sidebar-expand-easing, ease-out);
+}
+
+.luna-canvas-row > .waypoint-sidebar > .sidebar-shell.UxzaHe.luna-sidebar-dock {
+  z-index: 45;
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100%;
+  transform: none;
+  pointer-events: none;
+  transition: none;
+}
+
+.luna-canvas-row > .waypoint-sidebar > .sidebar-shell.UxzaHe.luna-sidebar-dock.m2T_PB {
+  width: 100% !important;
+  pointer-events: auto;
+}
+
 .luna-root > .luna-footer-slot {
   position: relative;
   overflow: hidden;
   flex: 0 0 auto;
   align-self: stretch;
   width: 100%;
+  height: var(--page-row-otf-footer-h);
   background-color: #0a0a0a;
   background-repeat: repeat;
   background-position: 0 0;
   background-size: auto;
 }
 
-/* Design-sized inner; width/height/transform from LunaChrome (same scale as main artboard) */
 .luna-root > .luna-footer-slot > .luna-footer-artboard {
   position: absolute;
   left: 0;
   top: 0;
+  width: 100%;
+  height: var(--page-row-otf-footer-h);
   background: transparent;
   pointer-events: none;
-}
-
-/* Docked sidebar: same scale as design surface, design-sized box before transform */
-.luna-canvas-row > .sidebar-shell.UxzaHe.luna-sidebar-dock {
-  z-index: 45;
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: var(--luna-shell-design-w) !important;
-  height: var(--canvas-h);
-  transform: scale(var(--luna-scale));
-  transform-origin: top right;
-  pointer-events: none;
-  /* Match LunaSidebar drawer timing so shell width doesn’t jump while inner flex reflows (rail “jiggle”). */
-  transition: width 0.35s ease-out;
-}
-
-.luna-canvas-row > .sidebar-shell.UxzaHe.luna-sidebar-dock.m2T_PB {
-  pointer-events: auto;
 }

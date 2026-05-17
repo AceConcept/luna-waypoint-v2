@@ -16,6 +16,9 @@
   --sidebar-active: #c5c5c5;
   --preview-list-bg: #e4e3e3;
   --sidebar-start-bg: #1c1c1c;
+  --sidebar-shell-bg: #282828;
+  --sidebar-expand-duration: 0.35s;
+  --sidebar-expand-easing: ease-out;
   /* Start button height; info control matches this width × height (see .intro-info-btn). */
   --sidebar-start-btn-height: 4.5rem;
 /*  Design canvas 160×90 rem (1rem = browser default size); keep DESIGN_REM_H in canvasScale.js equal to --canvas-h */
@@ -24,8 +27,8 @@
   /* OTF footer band (design rem); keep OTF_FOOTER_DESIGN_REM in canvasScale.js in sync */
   --page-row-otf-footer-h: 48rem;
   --stage-w: 120rem;
-  --sidebar-rail-w: 4.875rem;
-  --sidebar-collapsed: 4.875rem;
+  --sidebar-rail-w: 6.125rem; /* 98px @ 16px/rem */
+  --sidebar-collapsed: 6.125rem;
   /*
     Expanded sidebar (design rem, 1rem = browser default on :root):
     - --sidebar-expanded: full shell width when open (drawer + rail) = 49.3125rem (789÷16).
@@ -72,7 +75,7 @@
 /* .UxzaHe — dark shell; drawer column may layer bg-image (see LunaSidebar.jsx) */
 .sidebar-shell.UxzaHe {
   z-index: 20;
-  background-color: #404040;
+  background-color: var(--sidebar-shell-bg);
   background-image: none;
   width: var(--sidebar-collapsed);
   height: 100%;
@@ -80,7 +83,7 @@
   top: 0;
   right: 0;
   overflow: hidden;
-  transition: width 0.35s ease-out;
+  transition: width var(--sidebar-expand-duration) var(--sidebar-expand-easing);
   pointer-events: none;
   isolation: isolate;
   border: 0;
@@ -127,7 +130,9 @@
   min-width: 0;
   height: 100%;
   overflow: hidden;
-  transition: width 0.35s ease-out, min-width 0.35s ease-out;
+  transition:
+    width var(--sidebar-expand-duration) var(--sidebar-expand-easing),
+    min-width var(--sidebar-expand-duration) var(--sidebar-expand-easing);
   border: 0;
   position: relative;
   background-color: transparent;
@@ -159,7 +164,7 @@
   height: 100%;
   /* Full drawer width: layout stays stable while the drawer clips (no squashed text/grid). */
   min-width: calc(var(--sidebar-expanded) - var(--sidebar-rail-w));
-  transition: opacity 0.35s ease-out;
+  transition: opacity var(--sidebar-expand-duration) var(--sidebar-expand-easing);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -304,7 +309,7 @@
   min-height: 100%;
   border: 0;
   border-left: 0.0625rem solid rgba(255, 255, 255, 0.12);
-  background: #404040;
+  background: var(--sidebar-shell-bg);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -320,9 +325,11 @@
 .rail-label {
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  letter-spacing: 0.36em;
-  font-size: calc(0.6875rem * var(--sidebar-rail-font-mult));
-  font-weight: 600;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.875rem; /* 14px design — scales with shell transform */
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
   color: #fff;
   transform: translateZ(0);
   text-rendering: geometricPrecision;
