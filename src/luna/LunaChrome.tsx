@@ -93,7 +93,43 @@ export function LunaChrome({
       >
         <WaypointNavbar />
         <div className="waypoint-horizontal">
-          <div className="luna-space-left" aria-hidden="true" />
+          <div className="luna-space-left">
+            <div className="content-pos">
+              <div className="graphic">
+                <div className="graphic-positioner">
+                  <img
+                    className="graphic-img"
+                    src="/bg-img/story-graphic.svg"
+                    alt=""
+                    aria-hidden
+                  />
+                </div>
+              </div>
+              <div className="content">
+              <div className="content-flex-strt">
+                <div className="content-story">
+                  <div className="content-story-heading">
+                    <span className="content-story-bar" aria-hidden="true" />
+                    <h2 className="content-story-title">Step one</h2>
+                  </div>
+                  <div className="description">
+                    <p className="description-text">
+                      Start here with a brief overview placeholder for this milestone.
+                    </p>
+                  </div>
+                </div>
+                <div className="content-buttons">
+                  <button type="button" className="content-button content-button--fullscreen">
+                    Full screen
+                  </button>
+                  <button type="button" className="content-button content-button--case-study">
+                    Case study
+                  </button>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
           <div className="luna-center-column">
             <div
               className={`luna-design-surface${expanded ? ' luna-design-surface--drawer-open' : ''}`}
