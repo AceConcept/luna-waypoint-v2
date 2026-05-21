@@ -10,14 +10,16 @@ import {
 export type { FlowStepId } from './stageEmbedConfig'
 export {
   FLOW_STEP_IDS,
+  getStageEmbedBase,
+  getStageEmbedMessageOrigin,
   getStageEmbedOrigin,
   POLAR_SYS_HASH,
   STAGE_EMBED_ORIGIN,
-  stageEmbedUrl,
+  STAGE_EMBED_ROUTE,
   stageEmbedUrlForStep,
 } from './stageEmbedConfig'
 
-/** Map `#1` … `#6` (or legacy `#/N`) to step ids. */
+/** Map `#1` … `#3` (or legacy `#/N`) to step ids. */
 export function polarFlowIdFromHash(hash: string): FlowStepId {
   const segment = String(hash || '')
     .replace(/^#/, '')

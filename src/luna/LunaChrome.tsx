@@ -62,6 +62,7 @@ export function LunaChrome({
   const closeFullscreen = useCallback(() => {
     setFullscreenEmbedMounted(false)
     setFullscreenOpen(false)
+    setStageEmbedVisible(true)
   }, [])
 
   useEffect(() => {

@@ -656,6 +656,7 @@ a.wp-sidebar__info:visited {
   overflow: hidden;
   box-sizing: border-box;
   border: 0;
+  background: transparent;
 }
 
 .wp-sidebar__card.is-active .wp-sidebar__card-media {
@@ -715,6 +716,8 @@ a.wp-sidebar__info:visited {
 }
 
 .wp-sidebar__thumb--image {
+  margin-left: 0;
+  width: 100%;
   padding: 0;
   overflow: hidden;
 }

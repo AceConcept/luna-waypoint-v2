@@ -72,6 +72,11 @@ export function WaypointSidebar({
     normalizeActiveId(items, initialActiveId),
   )
   const previewListRef = useRef<HTMLDivElement>(null)
+  const cardRefs = useRef<Map<string, HTMLButtonElement>>(new Map())
+  const activeIdRef = useRef(activeId)
+  const programmaticScrollRef = useRef(false)
+
+  activeIdRef.current = activeId
 
   useEffect(() => {
     setActiveId((prev) => normalizeActiveId(items, prev))
@@ -92,15 +97,123 @@ export function WaypointSidebar({
 
   const selectItem = useCallback(
     (id: string) => {
+      activeIdRef.current = id
       setActiveId(id)
       onActiveItemChange?.(id)
     },
     [onActiveItemChange],
   )
 
-  const handleStart = useCallback(() => {
-    selectItem(activeId)
-  }, [activeId, selectItem])
+  const setCardRef = useCallback((id: string, el: HTMLButtonElement | null) => {
+    if (el) cardRefs.current.set(id, el)
+    else cardRefs.current.delete(id)
+  }, [])
+
+  const applyActiveFromScroll = useCallback(
+    (id: string) => {
+      if (!id || id === activeIdRef.current) return
+      activeIdRef.current = id
+      setActiveId(id)
+      onActiveItemChange?.(id)
+    },
+    [onActiveItemChange],
+  )
+
+  useEffect(() => {
+    if (!expanded) return
+    const el = initialActiveId ? cardRefs.current.get(initialActiveId) : undefined
+    if (!el) return
+    programmaticScrollRef.current = true
+    el.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    const timer = window.setTimeout(() => {
+      programmaticScrollRef.current = false
+    }, 600)
+    return () => window.clearTimeout(timer)
+  }, [initialActiveId, expanded])
+
+  useEffect(() => {
+    const root = previewListRef.current
+    if (!root || !expanded) return
+
+    let scrollTimer: ReturnType<typeof setTimeout> | null = null
+
+    const pickStepFromScroll = () => {
+      if (programmaticScrollRef.current) return
+      if (scrollTimer) clearTimeout(scrollTimer)
+      scrollTimer = setTimeout(() => {
+        scrollTimer = null
+        if (programmaticScrollRef.current) return
+        const rootRect = root.getBoundingClientRect()
+        const rootCenter = rootRect.top + rootRect.height / 2
+        let bestId: string | null = null
+        let bestDist = Infinity
+        for (const item of items) {
+          const el = cardRefs.current.get(item.id)
+          if (!el) continue
+          const rect = el.getBoundingClientRect()
+          const center = rect.top + rect.height / 2
+          const dist = Math.abs(center - rootCenter)
+          if (dist < bestDist) {
+            bestDist = dist
+            bestId = item.id
+          }
+        }
+        if (bestId) applyActiveFromScroll(bestId)
+      }, 120)
+    }
+
+    root.addEventListener('scroll', pickStepFromScroll, { passive: true })
+    return () => {
+      root.removeEventListener('scroll', pickStepFromScroll)
+      if (scrollTimer) clearTimeout(scrollTimer)
+    }
+  }, [expanded, items, applyActiveFromScroll])
+
+  useEffect(() => {
+    const root = previewListRef.current
+    if (!root || !expanded) return
+
+    let wheelAccum = 0
+    const WHEEL_THRESHOLD = 48
+
+    const onWheel = (event: WheelEvent) => {
+      if (programmaticScrollRef.current) return
+      const { scrollTop, scrollHeight, clientHeight } = root
+      const atTop = scrollTop <= 1
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 1
+      const idx = items.findIndex((item) => item.id === activeIdRef.current)
+      if (idx < 0) return
+
+      wheelAccum += event.deltaY
+      if (Math.abs(wheelAccum) < WHEEL_THRESHOLD) return
+
+      const down = wheelAccum > 0
+      wheelAccum = 0
+
+      if (down && idx < items.length - 1 && (atBottom || scrollHeight <= clientHeight)) {
+        event.preventDefault()
+        const next = items[idx + 1]
+        programmaticScrollRef.current = true
+        applyActiveFromScroll(next.id)
+        cardRefs.current.get(next.id)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+        window.setTimeout(() => {
+          programmaticScrollRef.current = false
+        }, 400)
+      } else if (!down && idx > 0 && (atTop || scrollHeight <= clientHeight)) {
+        event.preventDefault()
+        const prev = items[idx - 1]
+        programmaticScrollRef.current = true
+        applyActiveFromScroll(prev.id)
+        cardRefs.current.get(prev.id)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+        window.setTimeout(() => {
+          programmaticScrollRef.current = false
+        }, 400)
+      }
+    }
+
+    root.addEventListener('wheel', onWheel, { passive: false })
+    return () => root.removeEventListener('wheel', onWheel)
+  }, [expanded, items, applyActiveFromScroll])
 
   if (!items.length) {
     return null
@@ -157,14 +270,8 @@ export function WaypointSidebar({
                       <p className="wp-sidebar__description">
                         {activeItem.description}
                       </p>
+                      {(isInfoLink || onInfo) ? (
                       <div className="wp-sidebar__actions">
-                        <button
-                          type="button"
-                          className="wp-sidebar__start"
-                          onClick={handleStart}
-                        >
-                          Start
-                        </button>
                         {isInfoLink ? (
                           <a
                             className="wp-sidebar__info"
@@ -195,6 +302,7 @@ export function WaypointSidebar({
                           </button>
                         ) : null}
                       </div>
+                      ) : null}
                     </div>
                   </div>
 
@@ -208,7 +316,9 @@ export function WaypointSidebar({
                         {items.map((card, index) => (
                           <button
                             key={card.id}
+                            ref={(el) => setCardRef(card.id, el)}
                             type="button"
+                            data-step-id={card.id}
                             className={`wp-sidebar__card${
                               card.id === activeId ? ' is-active' : ''
                             }`}
@@ -216,10 +326,7 @@ export function WaypointSidebar({
                             aria-pressed={card.id === activeId}
                             onClick={() => selectItem(card.id)}
                           >
-                            <span
-                              className="wp-sidebar__card-media"
-                              style={{ backgroundColor: card.swatch }}
-                            >
+                            <span className="wp-sidebar__card-media">
                               {card.thumbUrl ? (
                                 <span
                                   className="wp-sidebar__thumb wp-sidebar__thumb--image"

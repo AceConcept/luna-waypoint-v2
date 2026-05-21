@@ -1,22 +1,16 @@
 /**
- * Sidebar titles + body copy — ordered for flow ids: 1–6.
- * (IDs stay wired to URL hashes; labels here are generic for the shell.)
+ * Sidebar + left-story titles and body copy — ordered for flow ids: 1–3.
+ * Navbar tab labels stay in WaypointNavbar.tsx (Step One / Two / Three).
  */
 
 export const STEP_TITLES = [
-  'Step one',
-  'Step two',
-  'Step three',
-  'Step four',
-  'Step five',
-  'Step six',
+  'Code Editor Origin',
+  'Extensions Page',
+  'Python Environs',
 ] as const
 
 export const STEP_DESCRIPTIONS = [
-  'Start here with a brief overview placeholder for this milestone.',
-  'Continue through the guided section with sample content placeholders.',
-  'Review monitoring-style placeholder content for this section.',
-  'Finish with a closing placeholder before you ship real content.',
-  'Explore additional placeholder content for this extended section.',
-  'Wrap up with final placeholder copy for the last milestone.',
+  'This guided flow demonstrates the transition from the code editor to installing a new extension update.',
+  'Review your installed extensions on this page, then select Python Environments to proceed.',
+  'The Python Environments detail view is now open. Click Download to install the extension and trigger the confirmation pop-up, completing the flow.',
 ] as const

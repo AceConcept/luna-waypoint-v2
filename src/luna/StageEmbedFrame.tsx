@@ -1,5 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { postStageEmbedStep, registerStageEmbedFrame } from '../store/stageEmbedBridge'
+import {
+  postStageEmbedStep,
+  registerStageEmbedFrame,
+  setStageEmbedLoaded,
+} from '../store/stageEmbedBridge'
 import { useFlowStore } from '../store/flowStore'
 
 type StageEmbedFrameProps = {
@@ -8,9 +12,18 @@ type StageEmbedFrameProps = {
   className?: string
 }
 
-/** iframe points at steps-project-slot; src updates navigate #/1 … #/6 without remounting. */
+function resolveEmbedSrc(src: string): string {
+  try {
+    return new URL(src, window.location.href).href
+  } catch {
+    return src
+  }
+}
+
+/** Luna editor iframe — single element; `src` updates in place (no remount key). */
 export function StageEmbedFrame({ src, title, className }: StageEmbedFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  const loadedSrcRef = useRef<string | null>(null)
 
   useEffect(() => {
     registerStageEmbedFrame(iframeRef.current)
@@ -20,14 +33,10 @@ export function StageEmbedFrame({ src, title, className }: StageEmbedFrameProps)
   useEffect(() => {
     const frame = iframeRef.current
     if (!frame) return
-    try {
-      const target = new URL(src, window.location.href).href
-      if (frame.src !== target) {
-        frame.src = src
-      }
-    } catch {
-      frame.src = src
-    }
+    const target = resolveEmbedSrc(src)
+    if (frame.src === target) return
+    setStageEmbedLoaded(false)
+    frame.src = target
   }, [src])
 
   return (
@@ -38,8 +47,13 @@ export function StageEmbedFrame({ src, title, className }: StageEmbedFrameProps)
       title={title}
       allow="fullscreen"
       loading="eager"
-      referrerPolicy="strict-origin-when-cross-origin"
       onLoad={() => {
+        const frame = iframeRef.current
+        if (!frame) return
+        const resolved = resolveEmbedSrc(src)
+        if (frame.src !== resolved) return
+        loadedSrcRef.current = resolved
+        setStageEmbedLoaded(true)
         const { stepIndex } = useFlowStore.getState()
         postStageEmbedStep(stepIndex + 1)
       }}
