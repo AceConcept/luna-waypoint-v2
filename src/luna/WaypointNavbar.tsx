@@ -50,12 +50,7 @@ export function WaypointNavbar() {
       <div className="waypoint-navbar">
         <div className="navbar-left">
           <div className="navbar-left-brand">
-            <a
-              className="navbar-left-label"
-              href="https://www.atencium-ui.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a className="navbar-left-label" href="https://www.atencium-ui.com/">
               atencium-ui.com
             </a>
           </div>
