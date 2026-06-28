@@ -164,7 +164,7 @@ export function LoadingScreen({
       aria-valuenow={progress}
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-label="Loading Luna Code Waypoint"
+      aria-label="Loading Waypoint"
       style={shutterStyle}
     >
       <div className="loadscreen__bg" aria-hidden="true" />
@@ -224,7 +224,7 @@ export function LoadingScreen({
               draggable={false}
             />
           </div>
-          <p className="loadscreen__status">// Loading Luna Code Waypoint...</p>
+          <p className="loadscreen__status">// Loading Waypoint...</p>
         </div>
       </div>
 
