@@ -1,5 +1,6 @@
+import type { ReactNode } from 'react'
 import { create } from 'zustand'
-import { STEP_DESCRIPTIONS, STEP_TITLES } from '../stepDescriptions'
+import { STEP_STORY_BODIES, STEP_TITLES } from '../stepDescriptions'
 import { postStageEmbedStep } from './stageEmbedBridge'
 import {
   FLOW_STEP_IDS,
@@ -34,11 +35,11 @@ export function polarFlowIdFromHash(hash: string): FlowStepId {
 export const FLOW_STEPS: {
   id: FlowStepId
   title: string
-  body: string
+  body: ReactNode
 }[] = FLOW_STEP_IDS.map((id, i) => ({
   id,
   title: STEP_TITLES[i] ?? STEP_TITLES[0],
-  body: STEP_DESCRIPTIONS[i] ?? STEP_DESCRIPTIONS[0],
+  body: STEP_STORY_BODIES[i] ?? STEP_STORY_BODIES[0],
 }))
 
 function initialStepIndexFromLocation(): number {
